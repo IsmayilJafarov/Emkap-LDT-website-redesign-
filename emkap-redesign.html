@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EMKAP – Fluent in Finance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ─── TOKENS ─── */
+  :root {
+    --navy:   #0A1628;
+    --navy2:  #0F2040;
+    --navy3:  #1C2B3A;
+    --gold:   #C9A84C;
+    --gold2:  #E2C06A;
+    --gold3:  #9B7F35;
+    --cream:  #F5F3EE;
+    --cream2: #E8E5DF;
+    --white:  #FFFFFF;
+    --text:   #0A1628;
+    --muted:  #5A6A7E;
+    --border: rgba(10,22,40,0.12);
+    --r:      8px;
+    --rl:     14px;
+    --trans:  0.28s ease;
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+  img { display: block; max-width: 100%; }
+  a { text-decoration: none; color: inherit; }
+  ul { list-style: none; }
+
+  /* ─── TYPOGRAPHY HELPERS ─── */
+  .display {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+  .label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ─── LAYOUT ─── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .section    { padding: 96px 0; }
+  .section-sm { padding: 64px 0; }
+
+  /* ─── TICKER ─── */
+  #ticker-bar {
+    background: var(--navy);
+    color: var(--cream2);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    height: 36px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 0;
+    animation: ticker 34s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker-item {
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .ticker-item .sym { color: var(--gold); }
+  .ticker-item .up  { color: #4ade80; }
+  .ticker-item .dn  { color: #f87171; }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ─── NAV ─── */
+  #nav {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: rgba(10, 22, 40, 0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,168,76,0.15);
+    transition: box-shadow var(--trans);
+  }
+  #nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 68px;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.72);
+    padding: 8px 14px;
+    border-radius: var(--r);
+    transition: color var(--trans), background var(--trans);
+  }
+  .nav-links a:hover { color: var(--gold); background: rgba(201,168,76,0.08); }
+  .nav-cta {
+    background: var(--gold);
+    color: var(--navy) !important;
+    font-weight: 600 !important;
+    padding: 10px 22px !important;
+    border-radius: var(--r) !important;
+    transition: background var(--trans) !important;
+  }
+  .nav-cta:hover { background: var(--gold2) !important; color: var(--navy) !important; }
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 6px;
+  }
+  .nav-hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--white); border-radius: 2px;
+    transition: transform var(--trans), opacity var(--trans);
+  }
+  .mobile-menu {
+    display: none;
+    flex-direction: column;
+    background: var(--navy2);
+    padding: 24px 32px 32px;
+    border-top: 1px solid rgba(201,168,76,0.15);
+  }
+  .mobile-menu a {
+    font-size: 1rem; font-weight: 500; color: rgba(255,255,255,0.8);
+    padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+    letter-spacing: 0.04em;
+  }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu.open { display: flex; }
+
+  /* ─── HERO ─── */
+  #hero {
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    padding: 120px 0 100px;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 28px; height: 2px;
+    background: var(--gold);
+  }
+  .hero-title {
+    font-size: clamp(3rem, 5vw, 4.8rem);
+    color: var(--white);
+    margin-bottom: 24px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-body {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 460px;
+    margin-bottom: 44px;
+    line-height: 1.75;
+  }
+  .btn-group { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    padding: 15px 30px;
+    border-radius: var(--r);
+    transition: background var(--trans), transform var(--trans);
+  }
+  .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--white);
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    padding: 14px 28px;
+    border-radius: var(--r);
+    border: 1px solid rgba(255,255,255,0.25);
+    transition: border-color var(--trans), background var(--trans), transform var(--trans);
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+  /* hero right — card stack */
+  .hero-cards { position: relative; height: 420px; }
+  .hcard {
+    position: absolute;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    backdrop-filter: blur(8px);
+    border-radius: var(--rl);
+    padding: 28px 32px;
+    transition: transform var(--trans);
+  }
+  .hcard-main {
+    width: 340px; left: 0; top: 0;
+    background: rgba(201,168,76,0.10);
+    border-color: rgba(201,168,76,0.25);
+  }
+  .hcard-main:hover { transform: translateY(-4px); }
+  .hcard-sub1 {
+    width: 220px; bottom: 40px; right: 0;
+  }
+  .hcard-sub2 {
+    width: 200px; top: 100px; right: 30px;
+    background: rgba(255,255,255,0.04);
+  }
+  .hcard-label { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+  .hcard-value { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 600; color: var(--white); line-height: 1; }
+  .hcard-sub   { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 6px; }
+  .hcard-tag   { display: inline-block; background: rgba(74,222,128,0.15); color: #4ade80; font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-top: 12px; }
+  .hcard-icon  { font-size: 2rem; margin-bottom: 10px; }
+  .hcard-sm-val { font-size: 1.3rem; font-weight: 600; color: var(--white); }
+
+  /* geo dots */
+  .hero-bg-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(201,168,76,0.08) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  .hero-glow {
+    position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    top: -100px; right: -100px; pointer-events: none;
+  }
+
+  /* ─── STATS BAR ─── */
+  #stats-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--cream2);
+    padding: 0;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-left: 1px solid var(--cream2);
+  }
+  .stat-cell {
+    padding: 36px 32px;
+    border-right: 1px solid var(--cream2);
+    border-top: 1px solid var(--cream2);
+    border-bottom: 1px solid var(--cream2);
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-num .accent { color: var(--gold3); }
+  .stat-desc { font-size: 0.82rem; color: var(--muted); font-weight: 400; }
+
+  /* ─── WHO WE ARE ─── */
+  #about {
+    background: var(--cream);
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .section-eyebrow { margin-bottom: 18px; }
+  .section-title {
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    color: var(--navy);
+    margin-bottom: 24px;
+  }
+  .section-body {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .about-features {
+    margin-top: 36px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .feat-chip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--white);
+    border: 1px solid var(--cream2);
+    border-radius: var(--r);
+  }
+  .feat-icon {
+    width: 36px; height: 36px; min-width: 36px;
+    background: rgba(201,168,76,0.12);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+  .feat-text strong { font-size: 0.85rem; font-weight: 600; color: var(--navy); display: block; margin-bottom: 2px; }
+  .feat-text span   { font-size: 0.78rem; color: var(--muted); }
+
+  /* about visual */
+  .about-visual {
+    position: relative;
+  }
+  .about-img-wrap {
+    border-radius: var(--rl);
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy3) 100%);
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 40px;
+  }
+  .about-timeline-item {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    opacity: 0.9;
+  }
+  .timeline-dot {
+    width: 12px; height: 12px; min-width: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 4px;
+    position: relative;
+  }
+  .timeline-dot::after {
+    content: '';
+    position: absolute;
+    left: 5px; top: 12px;
+    width: 2px; height: 40px;
+    background: rgba(201,168,76,0.25);
+  }
+  .about-timeline-item:last-child .timeline-dot::after { display: none; }
+  .tl-year { font-size: 0.7rem; color: var(--gold); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+  .tl-text { font-size: 0.82rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
+  .about-badge {
+    position: absolute;
+    bottom: -20px; right: -20px;
+    background: var(--gold);
+    color: var(--navy);
+    border-radius: var(--r);
+    padding: 20px 24px;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(201,168,76,0.3);
+  }
+  .about-badge small { display: block; font-size: 0.7rem; font-weight: 500; margin-top: 3px; opacity: 0.75; }
+
+  /* ─── OPEN ACCOUNT ─── */
+  #open-account { background: var(--navy); }
+  #open-account .section-title { color: var(--white); }
+  #open-account .section-body  { color: rgba(255,255,255,0.55); }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 2px;
+    margin-top: 56px;
+  }
+  .step-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--r);
+    padding: 32px 24px;
+    position: relative;
+    transition: background var(--trans), border-color var(--trans);
+  }
+  .step-card:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.2); }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: rgba(201,168,76,0.18);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .step-icon { font-size: 1.5rem; margin-bottom: 14px; }
+  .step-title { font-size: 0.9rem; font-weight: 600; color: var(--white); margin-bottom: 10px; }
+  .step-body  { font-size: 0.78rem; color: rgba(255,255,255,0.45); line-height: 1.65; }
+  .step-cta-wrap { margin-top: 52px; display: flex; align-items: center; gap: 20px; }
+
+  /* ─── APP SECTION ─── */
+  #app-section { background: var(--cream); }
+  .app-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .app-badges { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+  .app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--navy);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: var(--r);
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: background var(--trans), transform var(--trans);
+  }
+  .app-badge:hover { background: var(--navy3); transform: translateY(-2px); }
+  .app-badge .icon { font-size: 1.2rem; }
+  .app-mockup {
+    background: linear-gradient(145deg, var(--navy) 0%, var(--navy3) 100%);
+    border-radius: 24px;
+    padding: 48px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 32px 80px rgba(10,22,40,0.18);
+  }
+  .app-row {
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .app-row-label  { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+  .app-row-val    { font-size: 1rem; font-weight: 600; color: var(--white); }
+  .app-row-change { font-size: 0.78rem; font-weight: 600; }
+  .app-note {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: var(--cream2);
+    border-radius: var(--r);
+    border-left: 3px solid var(--gold);
+  }
+
+  /* ─── FAQ ─── */
+  #faq { background: var(--white); }
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .faq-list { display: flex; flex-direction: column; gap: 0; }
+  .faq-item {
+    border-bottom: 1px solid var(--cream2);
+    overflow: hidden;
+  }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 22px 0;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--navy);
+    transition: color var(--trans);
+  }
+  .faq-question:hover { color: var(--gold3); }
+  .faq-question.active { color: var(--gold3); }
+  .faq-chevron {
+    min-width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--cream2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--trans), border-color var(--trans), background var(--trans);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .faq-question.active .faq-chevron {
+    transform: rotate(180deg);
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+    color: var(--gold3);
+  }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.38s cubic-bezier(0.4,0,0.2,1), padding var(--trans);
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .faq-answer.open { max-height: 240px; padding-bottom: 22px; }
+  .faq-cta-box {
+    background: var(--cream);
+    border-radius: var(--rl);
+    padding: 36px 32px;
+    border: 1px solid var(--cream2);
+    margin-top: 32px;
+  }
+  .faq-cta-box h4 { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .faq-cta-box p  { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+
+  /* ─── CAREERS ─── */
+  #careers { background: var(--cream); }
+  .careers-intro {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    margin-bottom: 52px;
+    flex-wrap: wrap;
+  }
+  .careers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .job-card {
+    background: var(--white);
+    border: 1px solid var(--cream2);
+    border-radius: var(--rl);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: box-shadow var(--trans), border-color var(--trans), transform var(--trans);
+  }
+  .job-card:hover { box-shadow: 0 12px 40px rgba(10,22,40,0.08); border-color: var(--gold); transform: translateY(-2px); }
+  .job-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold3);
+    background: rgba(201,168,76,0.1);
+    padding: 4px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+  .job-title { font-size: 1rem; font-weight: 600; color: var(--navy); }
+  .job-meta  { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .job-meta span { display: flex; align-items: center; gap: 5px; }
+  .job-desc  { font-size: 0.83rem; color: var(--muted); line-height: 1.65; flex: 1; }
+  .job-apply {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--gold3);
+    transition: gap var(--trans);
+  }
+  .job-card:hover .job-apply { gap: 10px; }
+
+  /* ─── MARKETS ─── */
+  #markets { background: var(--white); }
+  .markets-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 36px;
+    border-bottom: 1px solid var(--cream2);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 10px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color var(--trans), border-color var(--trans);
+    font-family: 'Inter', sans-serif;
+  }
+  .tab-btn:hover  { color: var(--navy); }
+  .tab-btn.active { color: var(--navy); border-bottom-color: var(--gold); font-weight: 600; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .market-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  .market-table th {
+    text-align: left; font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); padding: 12px 16px;
+    border-bottom: 1px solid var(--cream2); background: var(--cream);
+  }
+  .market-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cream2);
+    color: var(--navy);
+    font-weight: 400;
+  }
+  .market-table tr:hover td { background: rgba(201,168,76,0.04); }
+  .market-table tr:last-child td { border-bottom: none; }
+  .up-cell  { color: #16a34a !important; font-weight: 600; }
+  .dn-cell  { color: #dc2626 !important; font-weight: 600; }
+  .up-badge { display: inline-flex; align-items: center; gap: 3px; background: #f0fdf4; color: #16a34a; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; }
+  .dn-badge { display: inline-flex; align-items: center; gap: 3px; background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 600; padding: 2px 8px; border-radius: 12px; }
+
+  /* ─── REGULATORS ─── */
+  #regulators {
+    background: var(--navy);
+    padding: 52px 0;
+    border-top: 1px solid rgba(201,168,76,0.12);
+  }
+  .reg-title { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); text-align: center; margin-bottom: 32px; }
+  .reg-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 56px;
+    flex-wrap: wrap;
+  }
+  .reg-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.55;
+    transition: opacity var(--trans);
+  }
+  .reg-badge:hover { opacity: 1; }
+  .reg-abbr { font-size: 1.2rem; font-weight: 700; color: var(--white); letter-spacing: 0.06em; }
+  .reg-name  { font-size: 0.68rem; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
+
+  /* ─── FOOTER ─── */
+  #footer { background: var(--navy); border-top: 1px solid rgba(255,255,255,0.06); }
+  .footer-top {
+    padding: 72px 0 56px;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+  }
+  .footer-brand { }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.06em;
+    margin-bottom: 14px;
+  }
+  .footer-logo span { color: var(--gold); }
+  .footer-tagline { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+  .footer-socials { display: flex; gap: 10px; }
+  .social-btn {
+    width: 36px; height: 36px;
+    border-radius: var(--r);
+    border: 1px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.9rem;
+    transition: border-color var(--trans), color var(--trans), background var(--trans);
+  }
+  .social-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .footer-col-title { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 20px; }
+  .footer-col a {
+    display: block; font-size: 0.85rem; color: rgba(255,255,255,0.55);
+    padding: 5px 0;
+    transition: color var(--trans);
+  }
+  .footer-col a:hover { color: var(--gold); }
+  .footer-bottom {
+    padding: 24px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .footer-copy { font-size: 0.78rem; color: rgba(255,255,255,0.25); }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a { font-size: 0.78rem; color: rgba(255,255,255,0.3); transition: color var(--trans); }
+  .footer-legal a:hover { color: var(--gold); }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.22s; }
+  .reveal-delay-3 { transition-delay: 0.34s; }
+  .reveal-delay-4 { transition-delay: 0.46s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    .steps-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-top  { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .hero-grid    { grid-template-columns: 1fr; gap: 48px; }
+    .hero-cards   { display: none; }
+    .about-grid   { grid-template-columns: 1fr; gap: 48px; }
+    .app-grid     { grid-template-columns: 1fr; gap: 40px; }
+    .faq-grid     { grid-template-columns: 1fr; gap: 40px; }
+    .careers-grid { grid-template-columns: 1fr; }
+    .stats-grid   { grid-template-columns: 1fr 1fr; }
+    .steps-grid   { grid-template-columns: 1fr 1fr; }
+    .footer-top   { grid-template-columns: 1fr; gap: 36px; }
+    .nav-links    { display: none; }
+    .nav-hamburger { display: flex; }
+    .section { padding: 64px 0; }
+    .container { padding: 0 20px; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ TICKER ═══════════════════ -->
+<div id="ticker-bar">
+  <div class="ticker-track" id="tickerTrack">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<header id="nav">
+  <div class="container">
+    <nav class="nav-inner">
+      <a href="#" class="nav-logo">EM<span>KAP</span></a>
+      <ul class="nav-links">
+        <li><a href="#about">Who We Are</a></li>
+        <li><a href="#open-account">Open Account</a></li>
+        <li><a href="#markets">Markets</a></li>
+        <li><a href="#careers">Careers</a></li>
+        <li><a href="https://emkap.com/contact-us/" target="_blank">Contact</a></li>
+        <li><a href="https://emkap.com/contact-us/" class="nav-cta">Open Account</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about">Who We Are</a>
+    <a href="#open-account">Open Account</a>
+    <a href="#markets">Markets Today</a>
+    <a href="#faq">FAQ</a>
+    <a href="#careers">Careers</a>
+    <a href="https://emkap.com/contact-us/" target="_blank">Contact</a>
+  </div>
+</header>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section id="hero">
+  <div class="hero-bg-dots"></div>
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow reveal">
+          <span class="label">CySEC &amp; FCA Regulated</span>
+        </div>
+        <h1 class="display hero-title reveal reveal-delay-1">
+          Fluent in<br><em>Finance.</em><br>Global in<br>Reach.
+        </h1>
+        <p class="hero-body reveal reveal-delay-2">
+          EMKAP is a CySEC and FCA licensed investment firm specialising in fixed income, emerging market bonds, and securities brokerage — connecting clients to global capital markets since 2006.
+        </p>
+        <div class="btn-group reveal reveal-delay-3">
+          <a href="#open-account" class="btn-primary">
+            Open an Account &rarr;
+          </a>
+          <a href="#about" class="btn-outline">
+            Our Story
+          </a>
+        </div>
+      </div>
+      <div class="hero-cards reveal reveal-delay-2">
+        <div class="hcard hcard-main">
+          <div class="hcard-label">Assets Under Management</div>
+          <div class="hcard-value">$2.4<span style="font-size:1.6rem">B+</span></div>
+          <div class="hcard-sub">Global portfolio reach</div>
+          <div class="hcard-tag">↑ 18.3% YTD</div>
+        </div>
+        <div class="hcard hcard-sub1">
+          <div class="hcard-label">Global Offices</div>
+          <div style="display:flex;gap:10px;align-items:baseline;margin:8px 0">
+            <div class="hcard-sm-val">4</div>
+            <div style="font-size:0.75rem;color:rgba(255,255,255,0.45)">Regulated Entities</div>
+          </div>
+          <div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:4px">Cyprus · UK · Nigeria · US</div>
+        </div>
+        <div class="hcard hcard-sub2">
+          <div class="hcard-label">Founded</div>
+          <div class="hcard-sm-val" style="font-size:1.8rem;font-family:'Cormorant Garamond',serif;color:var(--white);">2006</div>
+          <div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-top:4px">20+ years of resilience</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ STATS BAR ═══════════════════ -->
+<section id="stats-bar">
+  <div class="container" style="padding-left:0;padding-right:0;max-width:100%;">
+    <div class="stats-grid">
+      <div class="stat-cell reveal">
+        <div class="stat-num"><span class="counter" data-target="20">0</span><span class="accent">+</span></div>
+        <div class="stat-desc">Years of operating excellence</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-1">
+        <div class="stat-num"><span class="counter" data-target="4">0</span></div>
+        <div class="stat-desc">Regulated entities worldwide</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-2">
+        <div class="stat-num"><span class="counter" data-target="100">0</span><span class="accent">+</span></div>
+        <div class="stat-desc">Global counterparty relationships</div>
+      </div>
+      <div class="stat-cell reveal reveal-delay-3">
+        <div class="stat-num"><span class="accent">CySEC</span></div>
+        <div class="stat-desc">+FCA licensed &amp; compliant</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ WHO WE ARE ═══════════════════ -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="section-eyebrow reveal"><span class="label">Who We Are</span></div>
+        <h2 class="display section-title reveal reveal-delay-1">Built to navigate any market cycle</h2>
+        <p class="section-body reveal reveal-delay-2">
+          EMKAP commenced operations in December 2006 — and since then has steered through some of the most turbulent financial periods in modern history: the 2008 subprime crisis, the Eurozone debt crisis, Covid-19, and the geopolitical upheaval of recent years.
+        </p>
+        <p class="section-body reveal reveal-delay-2">
+          With a deep-rooted understanding of high-yield and emerging market bonds, our network spans established western institutions to frontier-market innovators. Our commitment to transparency and a client-focused approach ensures your strategy is positioned for growth.
+        </p>
+        <a href="https://emkap.com/our-story/" class="btn-primary" style="margin-top:8px;width:fit-content;" target="_blank">
+          Read Our Story &rarr;
+        </a>
+        <div class="about-features">
+          <div class="feat-chip reveal reveal-delay-1">
+            <div class="feat-icon">🌐</div>
+            <div class="feat-text">
+              <strong>Global Network</strong>
+              <span>Western &amp; EM counterparties</span>
+            </div>
+          </div>
+          <div class="feat-chip reveal reveal-delay-2">
+            <div class="feat-icon">🔒</div>
+            <div class="feat-text">
+              <strong>Regulated &amp; Secure</strong>
+              <span>CySEC, FCA, SEC-NG licensed</span>
+            </div>
+          </div>
+          <div class="feat-chip reveal reveal-delay-3">
+            <div class="feat-icon">📊</div>
+            <div class="feat-text">
+              <strong>Fixed Income Focus</strong>
+              <span>High-yield &amp; EM bonds</span>
+            </div>
+          </div>
+          <div class="feat-chip reveal reveal-delay-4">
+            <div class="feat-icon">🤝</div>
+            <div class="feat-text">
+              <strong>Client-Centric</strong>
+              <span>Transparent, tailored approach</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-visual reveal reveal-delay-2">
+        <div class="about-img-wrap">
+          <div class="about-timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="tl-year">2006</div>
+              <div class="tl-text">Founded in Limassol, Cyprus. CySEC regulated from inception.</div>
+            </div>
+          </div>
+          <div class="about-timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="tl-year">2008–2014</div>
+              <div class="tl-text">Navigated global financial crisis, eurozone debt crisis &amp; Cyprus banking haircuts.</div>
+            </div>
+          </div>
+          <div class="about-timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="tl-year">2017</div>
+              <div class="tl-text">Expanded to London — established EMKAP UK Ltd under FCA regulation.</div>
+            </div>
+          </div>
+          <div class="about-timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="tl-year">2025</div>
+              <div class="tl-text">Launched EMKAP Afrika Ltd in Lagos, Nigeria — SEC-NG regulated.</div>
+            </div>
+          </div>
+          <div class="about-timeline-item">
+            <div class="timeline-dot"></div>
+            <div>
+              <div class="tl-year">2026</div>
+              <div class="tl-text">Continuing global expansion with Euroclear direct access in London.</div>
+            </div>
+          </div>
+        </div>
+        <div class="about-badge">
+          20<sup style="font-size:0.6em">+</sup> Years
+          <small>Market Experience</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ OPEN ACCOUNT ═══════════════════ -->
+<section class="section" id="open-account">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span class="label" style="color:var(--gold);">Streamlined Onboarding</span></div>
+    <h2 class="display section-title reveal reveal-delay-1">Open your account<br>in five steps</h2>
+    <p class="section-body reveal reveal-delay-2" style="max-width:560px;">
+      Our step-by-step KYC process is designed to be simple and secure. Most accounts are approved within 48 hours.
+    </p>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">📋</div>
+        <div class="step-title">Collect Documents</div>
+        <div class="step-body">Prepare your ID, proof of address, and any required financial documentation.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">02</div>
+        <div class="step-icon">📤</div>
+        <div class="step-title">Submit Application</div>
+        <div class="step-body">Submit your application together with your KYC documents for quick processing.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">03</div>
+        <div class="step-icon">✍️</div>
+        <div class="step-title">Sign Agreements</div>
+        <div class="step-body">Review and digitally sign our compliance-approved agreements securely online.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num">04</div>
+        <div class="step-icon">✅</div>
+        <div class="step-title">Get Approved</div>
+        <div class="step-body">Our compliance team reviews your application and gets you approved swiftly.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-4">
+        <div class="step-num">05</div>
+        <div class="step-icon">🚀</div>
+        <div class="step-title">Start Investing</div>
+        <div class="step-body">Access your account and begin leveraging our market insights and trading solutions.</div>
+      </div>
+    </div>
+    <div class="step-cta-wrap reveal">
+      <a href="https://emkap.com/contact-us/" class="btn-primary" target="_blank">Get Started Today &rarr;</a>
+      <span style="font-size:0.82rem;color:rgba(255,255,255,0.4);">Funds transferred via bank wire or securities delivery</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<section class="section" id="app-section">
+  <div class="container">
+    <div class="app-grid">
+      <div>
+        <div class="section-eyebrow reveal"><span class="label">Mobile App</span></div>
+        <h2 class="display section-title reveal reveal-delay-1">Your portfolio,<br>in your pocket</h2>
+        <p class="section-body reveal reveal-delay-2">
+          Stay connected with your investments anytime, anywhere. Our mobile app delivers real-time market updates, secure trading, and full portfolio management at your fingertips.
+        </p>
+        <ul style="margin-bottom:28px;" class="reveal reveal-delay-2">
+          <li style="font-size:0.88rem;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--cream2);display:flex;gap:10px;align-items:center;"><span style="color:var(--gold)">✓</span> Real-time market prices &amp; quotes</li>
+          <li style="font-size:0.88rem;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--cream2);display:flex;gap:10px;align-items:center;"><span style="color:var(--gold)">✓</span> Secure portfolio monitoring</li>
+          <li style="font-size:0.88rem;color:var(--muted);padding:7px 0;border-bottom:1px solid var(--cream2);display:flex;gap:10px;align-items:center;"><span style="color:var(--gold)">✓</span> Trade &amp; settlement instructions</li>
+          <li style="font-size:0.88rem;color:var(--muted);padding:7px 0;display:flex;gap:10px;align-items:center;"><span style="color:var(--gold)">✓</span> Regular holdings confirmations</li>
+        </ul>
+        <div class="app-badges reveal reveal-delay-3">
+          <a href="https://apps.apple.com/by/app/meritkapital/id6742102758" class="app-badge" target="_blank">
+            <span class="icon">🍎</span>
+            <div><div style="font-size:0.65rem;opacity:0.6;margin-bottom:1px;">Download on the</div><div style="font-weight:600">App Store</div></div>
+          </a>
+          <a href="https://play.google.com/store/apps/details?id=com.meritkapital.mkportal" class="app-badge" target="_blank">
+            <span class="icon">▶</span>
+            <div><div style="font-size:0.65rem;opacity:0.6;margin-bottom:1px;">Get it on</div><div style="font-weight:600">Google Play</div></div>
+          </a>
+        </div>
+        <p class="app-note reveal reveal-delay-4">⚠️ EMKAP's mobile app is not available to U.S. investors</p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="app-mockup">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <span style="font-size:0.8rem;color:rgba(255,255,255,0.4);">Portfolio Overview</span>
+            <span style="font-size:0.65rem;color:var(--gold);font-weight:600;background:rgba(201,168,76,0.12);padding:3px 8px;border-radius:10px;">LIVE</span>
+          </div>
+          <div style="margin-bottom:16px;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--white);font-weight:600;">$1,284,503</div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.4);">Total portfolio value · <span style="color:#4ade80">+2.41% today</span></div>
+          </div>
+          <div class="app-row">
+            <div><div class="app-row-label">EUR/USD</div><div class="app-row-val">1.0842</div></div>
+            <div class="app-row-change up-cell">+0.18%</div>
+          </div>
+          <div class="app-row">
+            <div><div class="app-row-label">XAU/USD (Gold)</div><div class="app-row-val">2,341.40</div></div>
+            <div class="app-row-change up-cell">+0.74%</div>
+          </div>
+          <div class="app-row">
+            <div><div class="app-row-label">GBP/USD</div><div class="app-row-val">1.2714</div></div>
+            <div class="app-row-change dn-cell">-0.12%</div>
+          </div>
+          <div class="app-row">
+            <div><div class="app-row-label">BTC/USD</div><div class="app-row-val">67,210</div></div>
+            <div class="app-row-change up-cell">+1.33%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FAQ ═══════════════════ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div>
+        <div class="section-eyebrow reveal"><span class="label">FAQ</span></div>
+        <h2 class="display section-title reveal reveal-delay-1">Have questions?<br>We're here to help.</h2>
+        <p class="section-body reveal reveal-delay-2">Can't find the answer you're looking for? Reach out to our client relations team directly.</p>
+        <div class="faq-cta-box reveal reveal-delay-3">
+          <h4>Still have questions?</h4>
+          <p>Our client relations team is available Monday–Friday, 8am–6pm CET.</p>
+          <a href="https://emkap.com/contact-us/" class="btn-primary" style="font-size:0.85rem;padding:12px 22px;" target="_blank">Contact Us &rarr;</a>
+        </div>
+      </div>
+      <div class="faq-list reveal reveal-delay-2">
+        <div class="faq-item">
+          <button class="faq-question" data-faq="0">
+            How do I open an account?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-0">
+            Our KYC process is designed to be straightforward. Collect your identity and financial documents, submit your application with required KYC materials, sign agreements online, and await compliance approval — typically within 48 hours. Visit our "Open an Account" section above for the full step-by-step guide.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-faq="1">
+            How do I transfer funds?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-1">
+            Funds may be transferred via bank wire or securities delivery. Please note that cash deposits are not accepted. Our team will provide you with full wire instructions upon account approval.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-faq="2">
+            Where can I see my investments?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-2">
+            Clients have access to a secure, user-friendly client portal and our mobile trading application. Detailed trade confirmations and holdings reports are provided regularly and are available on request at any time.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-faq="3">
+            How do I submit trade instructions?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-3">
+            Trade and settlement instructions can be submitted via our client portal or mobile application, as well as through various authorised communication channels as agreed during onboarding.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-faq="4">
+            Which regulators oversee EMKAP?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-4">
+            EMKAP Ltd (Cyprus) is regulated by CySEC. EMKAP UK Ltd is regulated by the FCA with direct Euroclear access. EMKAP Afrika Ltd is regulated by Nigeria's Securities and Exchange Commission. EMKAP US operates under applicable US regulations.
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" data-faq="5">
+            Is the mobile app available globally?
+            <span class="faq-chevron">▾</span>
+          </button>
+          <div class="faq-answer" id="faq-5">
+            The EMKAP mobile app is available on the App Store and Google Play for most global users. Please note it is not available to U.S. investors. Download links are in the app section above.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CAREERS ═══════════════════ -->
+<section class="section" id="careers">
+  <div class="container">
+    <div class="careers-intro">
+      <div>
+        <div class="section-eyebrow reveal"><span class="label">Careers</span></div>
+        <h2 class="display section-title reveal reveal-delay-1" style="margin-bottom:0">Join a team<br>built for global finance</h2>
+      </div>
+      <a href="https://emkap.com/careers/" class="btn-primary" style="white-space:nowrap;height:fit-content;" target="_blank">View All Openings &rarr;</a>
+    </div>
+    <div class="careers-grid">
+      <div class="job-card reveal">
+        <div class="job-tag">🇨🇾 Limassol, Cyprus</div>
+        <div class="job-title">Compliance Analyst</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP Ltd</span>
+        </div>
+        <p class="job-desc">A great opportunity for someone at the start of their career in compliance, working within a CySEC-regulated environment across a diverse book of business.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+      <div class="job-card reveal reveal-delay-1">
+        <div class="job-tag">🇬🇧 London, UK</div>
+        <div class="job-title">FI New Issue Specialist</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP UK Ltd</span>
+        </div>
+        <p class="job-desc">Lead and coordinate the firm's participation in primary fixed income markets, working with an FCA-regulated firm with direct Euroclear access.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+      <div class="job-card reveal reveal-delay-2">
+        <div class="job-tag">🇳🇬 Lagos, Nigeria</div>
+        <div class="job-title">FI Trader &amp; Sales — Sub Sahara</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP Afrika</span>
+        </div>
+        <p class="job-desc">Specialise in fixed income securities with a focus on Sub-Saharan Africa and Nigerian emerging markets within our rapidly growing Lagos office.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+      <div class="job-card reveal reveal-delay-1">
+        <div class="job-tag">🇨🇾 Limassol, Cyprus</div>
+        <div class="job-title">HR Officer</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP Ltd</span>
+        </div>
+        <p class="job-desc">A proactive and detail-oriented HR Officer to join our growing team, supporting recruitment, onboarding, and employee lifecycle management.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+      <div class="job-card reveal reveal-delay-2">
+        <div class="job-tag">🇨🇾 Limassol, Cyprus</div>
+        <div class="job-title">Back Office Analyst</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP Ltd</span>
+        </div>
+        <p class="job-desc">Detail-driven and enthusiastic analyst to join our expanding Back Office team. Ideal for someone eager to build a career in financial operations.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+      <div class="job-card reveal reveal-delay-3">
+        <div class="job-tag">🇬🇧 London, UK</div>
+        <div class="job-title">Personal Assistant / Office Manager</div>
+        <div class="job-meta">
+          <span>💼 Full-time</span>
+          <span>EMKAP UK Ltd</span>
+        </div>
+        <p class="job-desc">Highly organised PA and Office Administrator to support our London FCA-regulated office with direct Euroclear access as we scale operations.</p>
+        <a href="https://emkap.com/careers/" class="job-apply" target="_blank">Apply Now →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ MARKETS ═══════════════════ -->
+<section class="section" id="markets">
+  <div class="container">
+    <div class="section-eyebrow reveal"><span class="label">Markets Today</span></div>
+    <h2 class="display section-title reveal reveal-delay-1">Live Market Snapshot</h2>
+    <p class="section-body reveal reveal-delay-2" style="max-width:500px;margin-bottom:0">
+      Indicative prices across key instruments. All data is illustrative — open an account for live trading access.
+    </p>
+    <div style="margin-top:40px;" class="reveal reveal-delay-2">
+      <div class="markets-tabs" id="marketTabs">
+        <button class="tab-btn active" data-tab="forex">Forex</button>
+        <button class="tab-btn" data-tab="commodities">Commodities</button>
+        <button class="tab-btn" data-tab="crypto">Crypto</button>
+        <button class="tab-btn" data-tab="indices">Indices</button>
+        <button class="tab-btn" data-tab="stocks">Stocks</button>
+      </div>
+      <div id="marketPanels">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ REGULATORS ═══════════════════ -->
+<section id="regulators">
+  <div class="container">
+    <div class="reg-title">Authorised &amp; Regulated By</div>
+    <div class="reg-row">
+      <div class="reg-badge">
+        <div class="reg-abbr">CySEC</div>
+        <div class="reg-name">Cyprus Securities Commission</div>
+      </div>
+      <div class="reg-badge">
+        <div class="reg-abbr">FCA</div>
+        <div class="reg-name">Financial Conduct Authority · UK</div>
+      </div>
+      <div class="reg-badge">
+        <div class="reg-abbr">SEC-NG</div>
+        <div class="reg-name">Securities &amp; Exchange Commission · Nigeria</div>
+      </div>
+      <div class="reg-badge">
+        <div class="reg-abbr">Euroclear</div>
+        <div class="reg-name">Direct Settlement Access</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer id="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">EM<span>KAP</span></div>
+        <div class="footer-tagline">Fluent in Finance.</div>
+        <div class="footer-socials">
+          <a href="https://x.com/meritkapital" class="social-btn" target="_blank" aria-label="X / Twitter">𝕏</a>
+          <a href="https://www.linkedin.com/company/meritkapital-ltd/" class="social-btn" target="_blank" aria-label="LinkedIn">in</a>
+          <a href="https://www.instagram.com/meritkapitalltd/" class="social-btn" target="_blank" aria-label="Instagram">ig</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Services</div>
+        <a href="https://emkap.com/services/" target="_blank">Services</a>
+        <a href="https://emkap.com/products/" target="_blank">Products</a>
+        <a href="https://emkap.com/markets/" target="_blank">Markets</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Offices</div>
+        <a href="https://emkap.com/emkap-uk/" target="_blank">EMKAP UK</a>
+        <a href="https://emkap.com/emkap-europe/" target="_blank">EMKAP Europe</a>
+        <a href="https://emkap.com/emkap-afrika/" target="_blank">EMKAP Afrika</a>
+        <a href="https://emkap.com/emkap-us/" target="_blank">EMKAP US</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Company</div>
+        <a href="https://emkap.com/our-story/" target="_blank">Our Story</a>
+        <a href="https://emkap.com/team/" target="_blank">Team</a>
+        <a href="https://emkap.com/careers/" target="_blank">Careers</a>
+        <a href="https://emkap.com/contact-us/" target="_blank">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 EMKAP Ltd. All rights reserved. CySEC &amp; FCA Regulated.</div>
+      <div class="footer-legal">
+        <a href="https://emkap.com/disclaimer/" target="_blank">Disclaimer</a>
+        <a href="https://emkap.com/disclaimer/" target="_blank">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// ─── TICKER DATA ───────────────────────────────────────
+const tickerData = [
+  { sym: 'EUR/USD', price: '1.0842', chg: '+0.18%', up: true },
+  { sym: 'GBP/USD', price: '1.2714', chg: '-0.12%', up: false },
+  { sym: 'XAU/USD', price: '2,341.40', chg: '+0.74%', up: true },
+  { sym: 'BTC/USD', price: '67,210', chg: '+1.33%', up: true },
+  { sym: 'USD/JPY', price: '153.42', chg: '-0.09%', up: false },
+  { sym: 'NAS100',  price: '18,240', chg: '+0.51%', up: true },
+  { sym: 'SP500',   price: '5,312',  chg: '+0.28%', up: true },
+  { sym: 'WTI OIL', price: '78.34',  chg: '-0.44%', up: false },
+  { sym: 'ETH/USD', price: '3,180',  chg: '+2.14%', up: true },
+  { sym: 'GER30',   price: '18,640', chg: '+0.33%', up: true },
+];
+function buildTicker() {
+  const track = document.getElementById('tickerTrack');
+  const items = [...tickerData, ...tickerData]; // doubled for seamless loop
+  track.innerHTML = items.map(t => `
+    <div class="ticker-item">
+      <span class="sym">${t.sym}</span>
+      <span>${t.price}</span>
+      <span class="${t.up ? 'up' : 'dn'}">${t.chg}</span>
+    </div>
+  `).join('');
+}
+buildTicker();
+
+// ─── NAV SCROLL ───────────────────────────────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── MOBILE MENU ─────────────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+let menuOpen = false;
+hamburger.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  mobileMenu.classList.toggle('open', menuOpen);
+  const spans = hamburger.querySelectorAll('span');
+  if (menuOpen) {
+    spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+});
+
+// ─── SCROLL REVEAL ────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => revealObs.observe(el));
+
+// ─── COUNTER ANIMATION ────────────────────────────────
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target, 10);
+  const duration = 1600;
+  const start = performance.now();
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(ease * target);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { animateCounter(e.target); counterObs.unobserve(e.target); }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.counter').forEach(c => counterObs.observe(c));
+
+// ─── FAQ ACCORDION ────────────────────────────────────
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.faq;
+    const answer = document.getElementById('faq-' + id);
+    const isOpen = answer.classList.contains('open');
+    // close all
+    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-question').forEach(b => b.classList.remove('active'));
+    // toggle current
+    if (!isOpen) {
+      answer.classList.add('open');
+      btn.classList.add('active');
+    }
+  });
+});
+
+// ─── MARKETS TABLE ────────────────────────────────────
+const marketData = {
+  forex: [
+    { sym: 'EUR/USD', bid: '1.0839', ask: '1.0841', chg: '+0.0019', pct: '+0.18%', up: true },
+    { sym: 'GBP/USD', bid: '1.2711', ask: '1.2713', chg: '-0.0015', pct: '-0.12%', up: false },
+    { sym: 'USD/JPY', bid: '153.38', ask: '153.42', chg: '-0.14', pct: '-0.09%', up: false },
+    { sym: 'USD/CHF', bid: '0.9041', ask: '0.9043', chg: '+0.0007', pct: '+0.08%', up: true },
+    { sym: 'AUD/USD', bid: '0.6541', ask: '0.6543', chg: '+0.0012', pct: '+0.18%', up: true },
+    { sym: 'NZD/USD', bid: '0.5980', ask: '0.5982', chg: '+0.0008', pct: '+0.13%', up: true },
+  ],
+  commodities: [
+    { sym: 'XAU/USD (Gold)', bid: '2340.10', ask: '2341.40', chg: '+17.20', pct: '+0.74%', up: true },
+    { sym: 'XAG/USD (Silver)', bid: '27.41', ask: '27.44', chg: '+0.32', pct: '+1.18%', up: true },
+    { sym: 'WTI Crude', bid: '78.30', ask: '78.34', chg: '-0.35', pct: '-0.44%', up: false },
+    { sym: 'Brent Crude', bid: '82.10', ask: '82.14', chg: '-0.28', pct: '-0.34%', up: false },
+    { sym: 'Natural Gas', bid: '2.380', ask: '2.384', chg: '+0.042', pct: '+1.80%', up: true },
+    { sym: 'Copper', bid: '4.4210', ask: '4.4230', chg: '+0.0310', pct: '+0.71%', up: true },
+  ],
+  crypto: [
+    { sym: 'BTC/USD', bid: '67,180', ask: '67,210', chg: '+883', pct: '+1.33%', up: true },
+    { sym: 'ETH/USD', bid: '3,174', ask: '3,180', chg: '+66', pct: '+2.14%', up: true },
+    { sym: 'XRP/USD', bid: '0.5841', ask: '0.5848', chg: '-0.0110', pct: '-1.85%', up: false },
+    { sym: 'LTC/USD', bid: '81.20', ask: '81.40', chg: '+0.84', pct: '+1.04%', up: true },
+    { sym: 'BCH/USD', bid: '401.20', ask: '402.10', chg: '-3.40', pct: '-0.84%', up: false },
+  ],
+  indices: [
+    { sym: 'NAS100', bid: '18,234', ask: '18,240', chg: '+93', pct: '+0.51%', up: true },
+    { sym: 'SP500',  bid: '5,310',  ask: '5,312',  chg: '+14', pct: '+0.28%', up: true },
+    { sym: 'DJ30',   bid: '38,940', ask: '38,950', chg: '+110', pct: '+0.28%', up: true },
+    { sym: 'GER30',  bid: '18,636', ask: '18,640', chg: '+61', pct: '+0.33%', up: true },
+    { sym: 'FR40',   bid: '7,611',  ask: '7,614',  chg: '-18', pct: '-0.24%', up: false },
+    { sym: 'UK100',  bid: '8,210',  ask: '8,213',  chg: '+22', pct: '+0.27%', up: true },
+  ],
+  stocks: [
+    { sym: 'Apple (AAPL)', bid: '213.40', ask: '213.60', chg: '+1.80', pct: '+0.85%', up: true },
+    { sym: 'Microsoft (MSFT)', bid: '424.10', ask: '424.40', chg: '+2.10', pct: '+0.50%', up: true },
+    { sym: 'Alphabet (GOOGL)', bid: '175.20', ask: '175.50', chg: '+0.90', pct: '+0.52%', up: true },
+    { sym: 'Tesla (TSLA)', bid: '177.30', ask: '177.80', chg: '-2.40', pct: '-1.34%', up: false },
+    { sym: 'Amazon (AMZN)', bid: '189.10', ask: '189.50', chg: '+1.10', pct: '+0.59%', up: true },
+    { sym: 'Meta Platforms', bid: '502.30', ask: '502.80', chg: '+3.80', pct: '+0.76%', up: true },
+  ],
+};
+
+function renderTable(tab) {
+  const rows = marketData[tab];
+  return `
+    <table class="market-table">
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Bid</th>
+          <th>Ask</th>
+          <th>Change</th>
+          <th>Change %</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => `
+          <tr>
+            <td style="font-weight:500">${r.sym}</td>
+            <td>${r.bid}</td>
+            <td>${r.ask}</td>
+            <td class="${r.up ? 'up-cell' : 'dn-cell'}">${r.chg}</td>
+            <td><span class="${r.up ? 'up-badge' : 'dn-badge'}">${r.up ? '▲' : '▼'} ${r.pct}</span></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderAllPanels() {
+  const container = document.getElementById('marketPanels');
+  const tabs = ['forex','commodities','crypto','indices','stocks'];
+  container.innerHTML = tabs.map(tab => `
+    <div class="tab-panel${tab === 'forex' ? ' active' : ''}" id="panel-${tab}">
+      ${renderTable(tab)}
+    </div>
+  `).join('');
+}
+renderAllPanels();
+
+document.getElementById('marketTabs').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  const tab = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+});
+
+// ─── SMOOTH SCROLL ────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      const offset = 80;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+      if (menuOpen) {
+        menuOpen = false;
+        mobileMenu.classList.remove('open');
+        hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>
